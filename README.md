@@ -46,32 +46,33 @@ npm run report
 
 ```bash
 # Run a specific test file
-npx playwright test tests/auth/login.spec.ts
+npx playwright test test/BackOffice-test/module/auth/login.spec.ts
 
 # Run tests matching a pattern
 npx playwright test --grep "TC_Tourist_E-Wallet_BO_0001"
 
 # Run with specific project
-npx playwright test tests/auth/login.spec.ts --project=chromium
+npx playwright test test/BackOffice-test/module/auth/login.spec.ts --project=chromium
 ```
 
 ## Project Structure
 
 ```
 tourist-automate-test/
-├── tests/
-│   ├── auth/                  # Authentication tests
-│   ├── dashboard/             # Dashboard tests
-│   ├── wallet-management/     # Wallet operations
-│   ├── transaction-history/   # Transaction records
-│   ├── kyc-management/        # KYC verification
-│   ├── client-management/     # Client lifecycle
-│   ├── partners/              # Partner management
-│   ├── internal-users/        # Admin user tests
-│   ├── global-fee/            # Fee configuration
-│   ├── global-limit/          # Limit configuration
-│   ├── reports/               # Report generation
-│   └── fixtures/              # Shared test data and helpers
+├── test/
+│   └── BackOffice-test/
+│       ├── module/             # Feature modules
+│       │   ├── auth/                  # Authentication tests
+│       │   ├── dashboard/             # Dashboard tests
+│       │   ├── wallet-management/     # Wallet operations
+│       │   ├── transaction-history/   # Transaction records
+│       │   ├── kyc-management/        # KYC verification
+│       │   ├── client-management/     # Client lifecycle
+│       │   ├── partners/              # Partner management
+│       │   ├── internal-users/        # Admin user tests
+│       │   ├── global-limit/          # Limit configuration
+│       │   └── reports/               # Report generation
+│       └── fixtures/             # Shared test data and helpers
 ├── scripts/                   # Cross-platform helper scripts
 ├── test-results/              # Test artifacts (git-ignored)
 ├── test-reports/              # HTML and JSON reports (git-ignored)
@@ -81,7 +82,7 @@ tourist-automate-test/
 
 ## Test Fixtures
 
-The `tests/fixtures/test-fixtures.ts` file contains:
+The `test/BackOffice-test/fixtures/test-fixtures.ts` file contains:
 
 - **TEST_DATA**: Credentials, URLs, and test user data
 - **SELECTORS**: CSS selectors organized by page/feature
@@ -90,7 +91,7 @@ The `tests/fixtures/test-fixtures.ts` file contains:
 Always import from fixtures when writing new tests:
 
 ```typescript
-import { test, expect, TEST_DATA, SELECTORS, login } from '../fixtures/test-fixtures';
+import { test, expect, TEST_DATA, SELECTORS, login } from '../../fixtures/test-fixtures';
 ```
 
 ## Browser Projects

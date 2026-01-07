@@ -3,6 +3,9 @@ node_modules/
 
 # Playwright
 BO/
+test/BO/
+test/BackOffice/BO/
+test/BackOffice-test/BO/
 test-results/
 test-reports/
 playwright-report/

@@ -9,16 +9,16 @@ This project is a **Playwright-based test automation framework** for the Tourist
 - **`playwright.config.ts`**: Main Playwright configuration. Defines projects (`chromium`, `chrome-headed`, `chrome-test`), base URL, and reporting settings.
 - **`package.json`**: Project dependencies and scripts.
 
-### Test Structure (`tests/`)
-- **`tests/fixtures/test-fixtures.ts`**: **CRITICAL**. The single source of truth for:
+### Test Structure (`test/BackOffice-test/`)
+- **`test/BackOffice-test/fixtures/test-fixtures.ts`**: **CRITICAL**. The single source of truth for:
     - **`SELECTORS`**: All CSS/XPath selectors organized by page.
     - **`TEST_DATA`**: Valid/invalid credentials and other static data.
     - **Helper Functions**: Reusable logic like `login`, `logout`, `navigateToMenu`.
-- **`tests/auth/`**: Login, password management tests.
-- **`tests/dashboard/`**: Dashboard viewing and navigation.
-- **`tests/wallet-management/`**: Wallet operations (freeze/unfreeze).
-- **`tests/client-management/`**: Client lifecycle and limits.
-- **`tests/kyc-management/`**: KYC review and processing.
+- **`test/BackOffice-test/module/auth/`**: Login, password management tests.
+- **`test/BackOffice-test/module/dashboard/`**: Dashboard viewing and navigation.
+- **`test/BackOffice-test/module/wallet-management/`**: Wallet operations (freeze/unfreeze).
+- **`test/BackOffice-test/module/client-management/`**: Client lifecycle and limits.
+- **`test/BackOffice-test/module/kyc-management/`**: KYC review and processing.
 
 ### Documentation
 - **`CLAUDE.md`**: Detailed developer guide and architecture overview.
@@ -43,19 +43,19 @@ This project is a **Playwright-based test automation framework** for the Tourist
 ### Running Specific Tests
 ```bash
 # Run a specific file
-npx playwright test tests/auth/login.spec.ts
+npx playwright test test/BackOffice-test/module/auth/login.spec.ts
 
 # Run a specific test case by name/grep
 npx playwright test --grep "TC_Tourist_E-Wallet_BO_0001"
 
 # Run with debug mode
-npx playwright test tests/auth/login.spec.ts --debug
+npx playwright test test/BackOffice-test/module/auth/login.spec.ts --debug
 ```
 
 ## Architecture & Conventions
 
 ### Page Object Model (POM) via Fixtures
-We do **not** use traditional class-based Page Objects. Instead, we use a **Fixture-based approach** defined in `tests/fixtures/test-fixtures.ts`.
+We do **not** use traditional class-based Page Objects. Instead, we use a **Fixture-based approach** defined in `test/BackOffice-test/fixtures/test-fixtures.ts`.
 
 **When writing/editing tests:**
 1.  **NEVER** hardcode selectors in spec files. Add them to `SELECTORS` in `test-fixtures.ts` first.
@@ -92,11 +92,10 @@ See `All-Test-Case.md` or `CLAUDE.md` for specific defects. Common issues includ
 ## Directory Map
 ```text
 /
-├── tests/
-│   ├── fixtures/       # Shared code, selectors, data
-│   ├── auth/           # Login specs
-│   ├── dashboard/      # Dashboard specs
-│   └── ...             # Other feature specs
+├── test/
+│   └── BackOffice-test/
+│       ├── fixtures/       # Shared code, selectors, data
+│       └── module/         # Feature specs grouped by module
 ├── test-reports/       # HTML reports
 ├── test-results/       # Artifacts (videos, traces)
 ├── playwright.config.ts

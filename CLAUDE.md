@@ -27,13 +27,13 @@ npm run report
 
 ```bash
 # Run a specific test file
-npx playwright test tests/auth/login.spec.ts
+npx playwright test test/BackOffice-test/module/auth/login.spec.ts
 
 # Run tests matching a pattern
 npx playwright test --grep "TC_Tourist_E-Wallet_BO_0001"
 
 # Run with specific project
-npx playwright test tests/auth/login.spec.ts --project=chrome-headed
+npx playwright test test/BackOffice-test/module/auth/login.spec.ts --project=chrome-headed
 ```
 
 ## Architecture
@@ -42,16 +42,16 @@ npx playwright test tests/auth/login.spec.ts --project=chrome-headed
 
 The framework uses a **page-object model** pattern with tests organized by business domain:
 
-- `tests/auth/` - Authentication (login, password management)
-- `tests/dashboard/` - Dashboard overview and navigation
-- `tests/wallet-management/` - Wallet operations, freeze/unfreeze
-- `tests/transaction-history/` - Transaction history and records
-- `tests/kyc-management/` - Customer verification and compliance
-- `tests/client-management/` - Client lifecycle and custom limits
-- `tests/partners/` - Partner setup and fee management
-- `tests/internal-users/` - Admin and internal staff management
-- `tests/reports/` - Operational reports
-- `tests/fixtures/test-fixtures.ts` - Shared test data, selectors, and helper functions
+- `test/BackOffice-test/module/auth/` - Authentication (login, password management)
+- `test/BackOffice-test/module/dashboard/` - Dashboard overview and navigation
+- `test/BackOffice-test/module/wallet-management/` - Wallet operations, freeze/unfreeze
+- `test/BackOffice-test/module/transaction-history/` - Transaction history and records
+- `test/BackOffice-test/module/kyc-management/` - Customer verification and compliance
+- `test/BackOffice-test/module/client-management/` - Client lifecycle and custom limits
+- `test/BackOffice-test/module/partners/` - Partner setup and fee management
+- `test/BackOffice-test/module/internal-users/` - Admin and internal staff management
+- `test/BackOffice-test/module/reports/` - Operational reports
+- `test/BackOffice-test/fixtures/test-fixtures.ts` - Shared test data, selectors, and helper functions
 
 ### Centralized Configuration
 
@@ -63,7 +63,7 @@ The framework uses a **page-object model** pattern with tests organized by busin
 
 The config uses a local Chrome executable at `/opt/google/chrome/chrome` with sandbox disabled for Linux compatibility.
 
-### Test Fixtures (`tests/fixtures/test-fixtures.ts`)
+### Test Fixtures (`test/BackOffice-test/fixtures/test-fixtures.ts`)
 
 This file is the **single source of truth** for:
 

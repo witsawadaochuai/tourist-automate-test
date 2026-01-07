@@ -5,7 +5,7 @@ import {
   TEST_DATA,
   login,
   waitForTableLoad,
-} from "../fixtures/test-fixtures";
+} from "../../fixtures/test-fixtures";
 
 test.describe("Client Management Module - Tourist E-Wallet Back Office", () => {
   test.beforeEach(async ({ page }) => {

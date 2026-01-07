@@ -144,7 +144,7 @@ if (process.env.RUN_CHROME_PROFILES === '1') {
 }
 
 export default defineConfig({
-  testDir: './tests',
+  testDir: './test',
   fullyParallel: false,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,

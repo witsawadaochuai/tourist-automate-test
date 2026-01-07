@@ -1,4 +1,4 @@
-import { test, expect, SELECTORS, TEST_DATA, login, logout, waitForTableLoad, navigateToMenu, confirmDialog } from '../fixtures/test-fixtures';
+import { test, expect, SELECTORS, TEST_DATA, login, logout, waitForTableLoad, navigateToMenu, confirmDialog } from '../../fixtures/test-fixtures';
 
 test.describe('Internal User Module - Tourist E-Wallet Back Office', () => {
 

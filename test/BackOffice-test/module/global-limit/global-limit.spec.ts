@@ -1,4 +1,4 @@
-import { test, expect, SELECTORS, TEST_DATA, login, waitForTableLoad, navigateToMenu } from '../fixtures/test-fixtures';
+import { test, expect, SELECTORS, TEST_DATA, login, waitForTableLoad, navigateToMenu } from '../../fixtures/test-fixtures';
 
 test.describe('Global Limit Module - Tourist E-Wallet Back Office', () => {
 

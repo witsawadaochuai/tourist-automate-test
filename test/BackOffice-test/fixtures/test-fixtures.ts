@@ -159,7 +159,7 @@ const savePassedScreenshot = async (page: Page, testInfo: TestInfo) => {
 
   const testCaseName = sanitizePathSegment(testInfo.title || 'unknown-test');
   const projectName = sanitizePathSegment(testInfo.project.name || 'project');
-  const targetDir = path.join(process.cwd(), 'BO', testCaseName);
+  const targetDir = path.join(process.cwd(), 'test', 'BackOffice-test', 'BO', testCaseName);
   await fs.mkdir(targetDir, { recursive: true });
   const screenshotPath = path.join(targetDir, `pass-${projectName}.png`);
 
