@@ -1,0 +1,55 @@
+{
+  "cookies": [
+    {
+      "name": "AUTH_SESSION_ID",
+      "value": "Y2UxN2VlNjgtNGY4Mi00MGM4LWEzNzUtODQ2MGI0N2MyZTlhLnFya2IyV2txa3dzcC1wZUxKN0dCUnd4SUNFTmQ2RFhjVzhnMXR0bUFmSDE5bkt1dXFtZUU2cC1md3lIM01WRnZxaE5PUy05dkhKQTRTZmUwRkxNSG1R.keycloak-alpha-0-23826",
+      "domain": "keycloak-alpha.inception.asia",
+      "path": "/realms/tourist-e-wallet/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "KC_AUTH_SESSION_HASH",
+      "value": "dwdDnB9kqa6t6QsxWecb3HIovyltNjI7diKtoMyE62o",
+      "domain": "keycloak-alpha.inception.asia",
+      "path": "/realms/tourist-e-wallet/",
+      "expires": 1768185314.381149,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "KC_RESTART",
+      "value": "eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0..4E6Ho9xzFiU_D054ebRr8A.vlRHtNNGfzY5idbF202PkVWKVM4CH3WgQ8Jy7qw7A1gu17idWI2O0LvaA41ap4wbMBrliUPu6gz4VrFPlfprHr-iHQaQ6rw9WGvA_aPQKWXvTKjk40sd9RyB7JrNCUFGcSLRludRCEXLbiggva7ZvKABfGeNd4Tz3g7-0CZk2zLId6DqyaKDcjnQNMhWhrgdveBgu84dXDdtRpbIKyS95Tr0Vy-JHJ6LKddY5QFm_eSdm9melUXzB3rXeoZka5blE6RC7GUXzXCmgKz87QL9VP1HvfJWuNVknIjEtb7bIBTUfloH0qOmNgJbcdxxJrs8zC_zW5tRFiT1jMEaX2Yt_N7AXMa1zAkg-feHjiYmvfrxUXoD9QqKbTFLEQMiVvWCVEZrv61SDOEKDfz6BB_GyfQ9LEYUmBbdiu9Cc1LOrhkeb331bI9roIyIJ2LXuQkl3dTulUDrPhrMeDXcRZf6VqoUvM2JP-OU7dQvOLl-sLjVUbWP9lxlBj86zi6kJFjL2O4---O0FYIkmdx40w4icA7gcMB8XFiEqnlVJ8ZZSnw4IUfO7kVS2ZvCLsIalCr0cOx7kg2hsZKVf3ZIzkPub9wTIEZ7zx2in0CS1legjdMJJUtt8GRmghM9J47SJkR93hpPurzr9qa1YlQjQOn__gxug5nUaMjlLvIEwE6CaIX6_VHeGflltn7_ZRrdQHjHtQfBHEqNCsMB1jBQoqWsqUhMc9zC2YIH9xe9Vl7HF4Z10iIRrj3UkLLhKcC8XBrPgta5JOsNzvf-o7oKdmYcQ9GWWGb7H4-pDu_S7N-6dad2BQvYUMrZICYECKvGsLnrkUGhTCdKu6XPY35Qj5uyTsT4jp7HmvNtpUxOvGikU8rlKVkDGh2jFb7voTqtfDCuIsOmGQ-9IfvjjklH92GtdAmGbTETDJpW9B_C6vZza1fiCPT_ABVrdXQ7xrAaDQP-JVceEc1JonDHZuNPVo5kb47ZZKYPXyahslF_ugMGo8InbDophvUNQqWifwrSg1C1C6kpLnr9jTJA6IW7FGu05l-BgavXBQLty8mViRIBP4bj6LKsfjc36M9QzUa8pPjbNpXOBIcUTSLhZTmj_dDomaqM8P0l0qVPT11GIUHiRoDPNpY4xgqO0p8EQ2NaOGaBdsX3Jq-Uf97xM-9IwjPxGv_6jt_ENmBAwopzdwH3OJHDxyQu5FddTrDn0TdMB4QR.jnJlVWameaoLQjUrT6i4vw",
+      "domain": "keycloak-alpha.inception.asia",
+      "path": "/realms/tourist-e-wallet/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "KEYCLOAK_IDENTITY",
+      "value": "eyJhbGciOiJIUzUxMiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICI1MTAzYzhlNi04YWZjLTRlYzUtYmIwZS0xYzM5MTc3MDUxNDcifQ.eyJleHAiOjE3NjgyMjEyNjQsImlhdCI6MTc2ODE4NTI2NCwianRpIjoiN2U2MDI0ODctZDFiMS03OGM0LWNmZmEtYWQxZDBlMGJmY2ZmIiwiaXNzIjoiaHR0cHM6Ly9rZXljbG9hay1hbHBoYS5pbmNlcHRpb24uYXNpYS9yZWFsbXMvdG91cmlzdC1lLXdhbGxldCIsInN1YiI6IjNmZGQ4NmY5LTE1MmEtNDJkNi05MjBmLTU0ODQ0MzE4YTI4MSIsInR5cCI6IlNlcmlhbGl6ZWQtSUQiLCJzaWQiOiJjZTE3ZWU2OC00ZjgyLTQwYzgtYTM3NS04NDYwYjQ3YzJlOWEiLCJzdGF0ZV9jaGVja2VyIjoiTHE4OGVaYVN5eFRzanhlcXpXMVhwbHNKaWZTQmtIYUl5clZ3Zmp5NGJKNCJ9.E7Vkb7OJDHBAtuLEuHLk-o0xmt7Ksctpxfa4mVJiqwM1Cu04dJf7moGujyVD2f7bhP2F7mTfEGev7qFCqIOTpA",
+      "domain": "keycloak-alpha.inception.asia",
+      "path": "/realms/tourist-e-wallet/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "KEYCLOAK_SESSION",
+      "value": "dwdDnB9kqa6t6QsxWecb3HIovyltNjI7diKtoMyE62o",
+      "domain": "keycloak-alpha.inception.asia",
+      "path": "/realms/tourist-e-wallet/",
+      "expires": 1768221263.230975,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    }
+  ],
+  "origins": []
+}

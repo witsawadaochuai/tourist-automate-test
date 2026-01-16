@@ -3,11 +3,19 @@ import { promises as fs } from 'fs';
 import * as path from 'path';
 
 // Test data configuration
+const getEnv = (key: string, fallback: string) => process.env[key] ?? fallback;
+
+const KEYCLOAK_CONFIG = {
+  url: getEnv('TEST_KEYCLOAK_URL', getEnv('NEXT_PUBLIC_KEYCLOAK_URL', 'https://keycloak-alpha.inception.asia')),
+  realm: getEnv('TEST_KEYCLOAK_REALM', getEnv('NEXT_PUBLIC_KEYCLOAK_REALM', 'tourist-e-wallet')),
+  clientId: getEnv('TEST_KEYCLOAK_CLIENT_ID', getEnv('NEXT_PUBLIC_KEYCLOAK_CLIENT_ID', 'tourist-e-wallet-backoffice')),
+};
+
 export const TEST_DATA = {
   validUser: {
-    email: 'ekkachai.n+1@enabridge.ai',
-    password: 'P@ssw0rd1234',
-    newPassword: 'NewP@ssw0rd123'
+    email: getEnv('TEST_USER_EMAIL', 'witsawa.d+1@enabridge.ai'),
+    password: getEnv('TEST_USER_PASSWORD', 'ChangeMe123@'),
+    newPassword: getEnv('TEST_USER_NEW_PASSWORD', 'NewP@ssw0rd123')
   },
   invalidUser: {
     email: 'ekkachai.n+1@enabridge.ai',
@@ -19,7 +27,7 @@ export const TEST_DATA = {
   },
   unregisteredEmail: 'ekkachai@gmoil.ai',
   // Use this email for forgot password tests (your email)
-  forgotPasswordEmail: 'nuttapong.w+1@enabridge.ai',
+  forgotPasswordEmail: getEnv('TEST_FORGOT_PASSWORD_EMAIL', 'nuttapong.w+1@enabridge.ai'),
   baseURL: 'https://backoffice-wallet-dev.inception.asia'
 };
 
@@ -151,48 +159,239 @@ export const test = base.extend<{
 });
 
 const sanitizePathSegment = (value: string) => value.replace(/[\\/:*?"<>|]/g, '_').trim();
+const TEST_CASE_ID_PATTERN = /TC_Tourist_E-Wallet_BO_\d{4}/;
 
-const savePassedScreenshot = async (page: Page, testInfo: TestInfo) => {
+const getTestCaseFolderName = (title: string) => {
+  const match = title.match(TEST_CASE_ID_PATTERN);
+  if (match?.[0]) {
+    return match[0];
+  }
+  return sanitizePathSegment(title || 'unknown-test');
+};
+
+const getBackOfficeDir = () => path.resolve(process.cwd(), '..', 'Back_Office');
+
+const saveTestScreenshot = async (page: Page, testInfo: TestInfo) => {
   if (testInfo.status !== 'passed' || page.isClosed()) {
     return;
   }
 
-  const testCaseName = sanitizePathSegment(testInfo.title || 'unknown-test');
+  const testCaseName = getTestCaseFolderName(testInfo.title || 'unknown-test');
   const projectName = sanitizePathSegment(testInfo.project.name || 'project');
-  const targetDir = path.join(process.cwd(), 'test', 'BackOffice-test', 'BO', testCaseName);
+  const targetDir = path.join(getBackOfficeDir(), testCaseName);
   await fs.mkdir(targetDir, { recursive: true });
   const screenshotPath = path.join(targetDir, `pass-${projectName}.png`);
 
   await page.screenshot({ path: screenshotPath, fullPage: true });
 };
 
-test.afterEach(async ({ page }, testInfo) => {
-  await savePassedScreenshot(page, testInfo).catch(() => {});
-});
+if (process.env.PW_SKIP_TEST_HOOKS !== '1') {
+  test.afterEach(async ({ page }, testInfo) => {
+    await saveTestScreenshot(page, testInfo).catch(() => {});
+  });
+}
+
+// Helper function to handle Keycloak logout dialog
+async function handleLogoutDialog(page: Page): Promise<boolean> {
+  // Wait a bit for page to stabilize
+  await page.waitForTimeout(1000);
+
+  // Check if we're on a logout page by URL or content
+  const currentUrl = page.url();
+  const isLogoutPage = currentUrl.includes('logout');
+
+  const logoutQuestion = page.getByText('Do you want to log out?');
+  const signOutButton = page
+    .getByRole('button', { name: /sign out/i })
+    .or(page.getByRole('link', { name: /sign out/i }))
+    .or(page.locator('button:has-text("Sign out")'))
+    .or(page.locator('a:has-text("Sign out")'))
+    .or(page.getByText('Sign out', { exact: true }));
+
+  // Try to find and click sign out button
+  if (isLogoutPage || await logoutQuestion.isVisible({ timeout: 3000 }).catch(() => false)) {
+    // Wait for button to be visible
+    try {
+      await signOutButton.first().waitFor({ state: 'visible', timeout: 5000 });
+      await signOutButton.first().click();
+      await page.waitForLoadState('domcontentloaded');
+      await page.waitForTimeout(3000);
+      return true;
+    } catch {
+      // Button not found, try alternative approach
+      return false;
+    }
+  }
+  return false;
+}
+
+const buildKeycloakLogoutUrl = (postLogoutRedirectUri: string) => {
+  if (!KEYCLOAK_CONFIG.url || !KEYCLOAK_CONFIG.realm || !KEYCLOAK_CONFIG.clientId) {
+    return null;
+  }
+
+  const logoutUrl = new URL(`${KEYCLOAK_CONFIG.url}/realms/${KEYCLOAK_CONFIG.realm}/protocol/openid-connect/logout`);
+  logoutUrl.searchParams.set('client_id', KEYCLOAK_CONFIG.clientId);
+  logoutUrl.searchParams.set('post_logout_redirect_uri', postLogoutRedirectUri);
+  return logoutUrl.toString();
+};
+
+const forceKeycloakLogout = async (page: Page) => {
+  const postLogoutRedirectUri = `${TEST_DATA.baseURL}/login?kc_logout=done`;
+  const logoutUrl = buildKeycloakLogoutUrl(postLogoutRedirectUri);
+  if (!logoutUrl) {
+    return;
+  }
+
+  await page.goto(logoutUrl).catch(() => {});
+  await handleLogoutDialog(page);
+  await page.waitForTimeout(1000);
+};
+
+// Helper function to perform login attempt
+async function attemptLogin(page: Page, email: string, password: string, timeout: number = 10000): Promise<boolean> {
+  // Wait for email input - try multiple selectors
+  const emailInput = page.getByRole('textbox', { name: /email/i }).first();
+  const emailInputAlt = page.locator('input[type="email"], input[name="email"], input[placeholder*="email" i]').first();
+
+  let foundEmailInput = false;
+  try {
+    await emailInput.waitFor({ state: 'visible', timeout });
+    foundEmailInput = true;
+  } catch {
+    try {
+      await emailInputAlt.waitFor({ state: 'visible', timeout: 5000 });
+      foundEmailInput = true;
+    } catch {
+      return false;
+    }
+  }
+
+  if (!foundEmailInput) {
+    return false;
+  }
+
+  // Fill credentials
+  const inputToUse = await emailInput.isVisible().catch(() => false) ? emailInput : emailInputAlt;
+  const typingDelayRaw = Number(process.env.LOGIN_TYPE_DELAY ?? 80);
+  const typingDelay = Number.isFinite(typingDelayRaw) ? typingDelayRaw : 80;
+
+  await inputToUse.click();
+  await inputToUse.fill('');
+  await inputToUse.type(email, { delay: typingDelay });
+
+  // Fill password - use locator directly since password fields have type="password" not role="textbox"
+  const passwordInputAlt = page.locator('input[type="password"]').first();
+  await passwordInputAlt.click();
+  await passwordInputAlt.fill('');
+  await passwordInputAlt.type(password, { delay: typingDelay });
+  await passwordInputAlt.press('Tab').catch(() => {});
+
+  await page.waitForTimeout(300);
+
+  // Click login button
+  const loginButton = page.getByRole('button', { name: 'Log in' });
+  try {
+    await loginButton.waitFor({ state: 'visible', timeout: 5000 });
+    await expect(loginButton).toBeEnabled({ timeout: 5000 });
+    await loginButton.click();
+  } catch {
+    // Try alternative button selector
+    const loginBtnAlt = page.locator('button:has-text("Log in"), button[type="submit"]').first();
+    await loginBtnAlt.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
+    await loginBtnAlt.click();
+  }
+
+  await page.waitForLoadState('domcontentloaded');
+  await page.waitForTimeout(2000);
+
+  return true;
+}
+
+const waitForDashboardReady = async (page: Page) => {
+  if (page.url().includes('dashboard')) {
+    return true;
+  }
+
+  const dashboardText = page.getByRole('heading', { name: /dashboard/i });
+  const dashboardButton = page.getByRole('button', { name: /dashboard/i });
+
+  return Promise.race([
+    dashboardText.waitFor({ state: 'visible', timeout: 15000 }).then(() => true).catch(() => false),
+    dashboardButton.waitFor({ state: 'visible', timeout: 15000 }).then(() => true).catch(() => false),
+  ]);
+};
 
 // Helper functions
 export async function login(page: Page, email: string, password: string) {
-  await page.goto('/');
-  await page.waitForLoadState('domcontentloaded');
+  const resetAuthState = async () => {
+    await page.context().clearCookies();
+    await page.goto('/');
+    await page.waitForLoadState('domcontentloaded');
+    await page.evaluate(() => {
+      window.localStorage.clear();
+      window.sessionStorage.clear();
+    }).catch(() => {});
+    await page.waitForTimeout(500);
+    await forceKeycloakLogout(page);
+    await page.goto('/');
+    await page.waitForLoadState('domcontentloaded');
+    await page.waitForTimeout(500);
+  };
 
-  // Wait for email input to be visible
-  const emailInput = page.locator(SELECTORS.login.emailInput);
-  await emailInput.waitFor({ state: 'visible', timeout: 30000 });
+  const isPrimaryUser = email === TEST_DATA.validUser.email;
+  const fallbackPassword = process.env.LOGIN_FALLBACK_PASSWORD ?? '';
+  const passwordCandidates = [
+    password,
+    ...(isPrimaryUser && fallbackPassword ? [fallbackPassword] : []),
+    ...(isPrimaryUser ? [TEST_DATA.validUser.newPassword] : []),
+  ].filter(Boolean);
 
-  // Fill credentials
-  await emailInput.fill(email);
-  await page.fill(SELECTORS.login.passwordInput, password);
+  const uniquePasswords = Array.from(new Set(passwordCandidates));
 
-  // Add delay before clicking login button
-  await page.waitForTimeout(1000);
+  for (const candidate of uniquePasswords) {
+    // Retry login per password to handle session expiry edge cases
+    for (let attempt = 1; attempt <= 2; attempt++) {
+      // Always reset cookies + storage before attempting login
+      await resetAuthState();
 
-  // Click login button using getByRole for better reliability
-  const loginButton = page.getByRole('button', { name: 'Log in' });
-  await loginButton.waitFor({ state: 'visible', timeout: 10000 });
-  await loginButton.click();
+      // Handle logout dialog if it appears (multiple checks)
+      for (let i = 0; i < 2; i++) {
+        if (await handleLogoutDialog(page)) {
+          await page.waitForTimeout(2000);
+        }
+      }
 
-  // Wait for Dashboard to appear instead of networkidle (dashboard has continuous activity)
-  await page.waitForSelector('text=Dashboard', { timeout: 60000 });
+      // Try to login
+      const loginSuccess = await attemptLogin(page, email, candidate, 15000);
+
+      if (loginSuccess) {
+        // Wait for navigation after login
+        await page.waitForTimeout(3000);
+
+        // Check if we landed on logout dialog (session expired case)
+        if (await handleLogoutDialog(page)) {
+          // After logout, we need to try again
+          await page.waitForTimeout(2000);
+          continue; // Retry the whole login flow
+        }
+
+        if (await waitForDashboardReady(page)) {
+          return; // Success!
+        }
+
+        const stillOnLogin = await page.locator(SELECTORS.login.emailInput).isVisible().catch(() => false);
+        if (stillOnLogin) {
+          const hasError = await page.locator(SELECTORS.login.errorMessage).isVisible().catch(() => false);
+          if (hasError) {
+            break; // Try the next password if we hit a login error
+          }
+        }
+      }
+    }
+  }
+
+  throw new Error('Login failed: unable to reach dashboard with provided credentials');
 }
 
 export async function logout(page: Page) {

@@ -249,7 +249,7 @@ test.describe('Reports Module - Tourist E-Wallet Back Office', () => {
     }
   });
 
-  test('Download Settlement Report Success', async ({ page }) => {
+  test('TC_Tourist_E-Wallet_BO_0091 - Download Settlement Report Success', async ({ page }) => {
     // Additional test for Settlement Report download
     // Test Steps:
     // 1. Login success (done in beforeEach)

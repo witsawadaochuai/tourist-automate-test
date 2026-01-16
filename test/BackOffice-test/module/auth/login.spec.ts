@@ -1,8 +1,11 @@
 import { test, expect, SELECTORS, TEST_DATA, login, logout } from '../../fixtures/test-fixtures';
 
+test.use({ storageState: { cookies: [], origins: [] } });
+
 test.describe('Login Module - Tourist E-Wallet Back Office', () => {
 
   test.beforeEach(async ({ page }) => {
+    await logout(page);
     await page.goto('/');
     await page.waitForLoadState('networkidle');
   });
@@ -34,8 +37,6 @@ test.describe('Login Module - Tourist E-Wallet Back Office', () => {
     const dashboardVisible = await page.getByRole('heading', { name: 'Dashboard' }).isVisible();
     expect(dashboardVisible).toBeTruthy();
 
-    // Logout for cleanup
-    await logout(page);
   });
 
   test('TC_Tourist_E-Wallet_BO_0002 - Email and password Empty', async ({ page }) => {

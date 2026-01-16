@@ -1,6 +1,7 @@
 {
   "name": "tourist-automate-test",
   "version": "1.0.0",
+  "type": "module",
   "description": "Playwright test automation for Tourist E-Wallet Back Office",
   "scripts": {
     "test": "npx playwright test --project=chromium",
@@ -14,6 +15,7 @@
     "@playwright/test": "^1.57.0"
   },
   "devDependencies": {
+    "@types/node": "^25.0.6",
     "cross-env": "^7.0.3"
   },
   "engines": {

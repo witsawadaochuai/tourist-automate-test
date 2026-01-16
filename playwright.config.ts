@@ -2,6 +2,10 @@ import { defineConfig, devices } from '@playwright/test';
 import * as os from 'os';
 import * as path from 'path';
 import * as fs from 'fs';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 /**
  * Cross-platform Chrome executable detection
@@ -78,6 +82,7 @@ function getTestProfileDir(): string {
 const chromePath = getChromePath();
 const chromeUserDataDir = getChromeUserDataDir();
 const testProfileDir = getTestProfileDir();
+const storageStatePath = path.resolve(__dirname, 'test/.auth/storageState.json');
 
 // Platform-specific launch args
 const getLaunchArgs = (): string[] => {
@@ -144,6 +149,7 @@ if (process.env.RUN_CHROME_PROFILES === '1') {
 }
 
 export default defineConfig({
+  globalSetup: './global-setup',
   testDir: './test',
   fullyParallel: false,
   forbidOnly: !!process.env.CI,
@@ -156,6 +162,7 @@ export default defineConfig({
   ],
   use: {
     baseURL: 'https://backoffice-wallet-dev.inception.asia',
+    storageState: storageStatePath,
     trace: 'on-first-retry',
     screenshot: 'on',
     video: 'retain-on-failure',
